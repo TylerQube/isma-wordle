@@ -1,0 +1,44 @@
+@import "./flex.scss";
+@import "./spacing.scss";
+@import "./board.scss";
+@import "./keyboard.scss";
+@import "./letter-status.scss";
+
+html, body {
+  @extend .m0;
+  font-family: 'Raleway', sans-serif;
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+}
+
+$header-height: 8%;
+
+#header {
+  @extend .flex-row;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
+
+  @extend .m0;
+  height: $header-height;
+  // -webkit-box-shadow: 0px 5px 12px 4px #C3C3C3; 
+  box-shadow: 0px 2px 6px #C3C3C3;
+  background-color: white;
+
+  p, h1, h2, h3, h4, h5, h6 {
+    margin: 0.5em;
+  }
+}
+
+#app-cont {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  margin: auto;
+
+  height: calc(100% - #{$header-height});
+  width: calc(min(100vw, 500px));
+}

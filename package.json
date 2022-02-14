@@ -1,0 +1,31 @@
+{
+  "name": "isma-wordle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack && npm run build-sass",
+    "build-dev": "webpack --watch",
+    "build-sass": "node-sass src/sass/style.scss -o public/styles",
+    "build-sass-dev": "node-sass -w src/sass/style.scss -o public/styles",
+    "start": "node server.js",
+    "start-dev": "nodemon server.js"
+  },
+  "author": "TylerQube",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.15",
+    "webpack": "^5.68.0",
+    "webpack-cli": "^4.9.2"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.17.2",
+    "node-sass": "^7.0.1",
+    "sass": "^1.49.7",
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.5.5"
+  }
+}

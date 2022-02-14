@@ -1,0 +1,69 @@
+@import "./flex.scss";
+
+$board-width: 350px;
+
+#board-cont {
+  @extend .flex-col;
+  @extend .flex-center;
+  flex-grow: 1;
+
+  width: 100%;
+  // width: calc(min(#{$board-width}, 100vw));
+  // height: calc(min(calc(#{$board-width} * 6 / 5), 120vw));
+}
+
+$grid-gap: 0.6em;
+
+.board {
+  display: grid;
+  grid-auto-flow: row;
+  grid-gap: $grid-gap;
+  box-sizing: border-box;
+
+  padding: 20px;
+}
+
+.board-row {
+  display: grid;
+  grid-gap: $grid-gap;
+  grid-auto-flow: column;
+
+  $delay : 0.2s;
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: calc(1 + (#{$delay} * #{$i}));
+    }
+  }
+}
+
+.letter-cont {
+  width: 100%;
+  height: 100%;
+
+  @extend .flex-center;
+}
+
+.board-cell {
+  border: 1px solid gray;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+
+  transition: height 0.2s;
+
+  @extend .flex-col;
+  @extend .flex-center;
+
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  &::before {
+    content: attr(letter);
+    position: absolute;
+    font-size: 2em;  
+  }
+}

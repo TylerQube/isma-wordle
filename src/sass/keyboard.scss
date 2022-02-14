@@ -1,0 +1,50 @@
+@import "./flex.scss";
+
+#keyboard-cont {
+  width: 100%;
+  padding: 20px;
+}
+
+.keyboard {
+  @extend .flex-col;
+  @extend .flex-center;
+  font-size: 1rem;
+}
+
+.key-row {
+  @extend .flex-row;
+  @extend .flex-center;
+  .key {
+    padding: 1em 0.5em;
+  }
+}
+
+.small-key-row {
+  .key {
+    padding: 0.5em 0.5em;
+  }
+}
+
+$key-color: rgb(131, 130, 130);
+
+.key {
+  @extend .flex-center;
+  color: white;
+  background-color: $key-color;
+  border-radius: 10px;
+  margin: 0.2em;
+  min-width: 0.9em;
+
+  p {
+    margin: 0;
+  }
+
+  &:active {
+    background-color: darken($key-color, 30%);
+  }
+
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
