@@ -36,6 +36,13 @@ const setBoardSize = () => {
   const sizeScalePx = 70;
   board.style.width = `min(${sizeScalePx * wordLen}px, 100vw)`;
   board.style.height = `calc(min(${sizeScalePx * maxGuesses}px, ${100 * maxGuesses / wordLen}vw))`;
+
+  board.style.gridTemplateRows = `repeat(${maxGuesses}, 1fr)`;
+  for(let i = 0; i < maxGuesses; i++) {
+    const row = getRow(i) as HTMLDivElement;
+    row.style.gridTemplateColumns = `repeat(${wordLen}, 1fr)`;
+  }
+
 };
 
 let curGuess : number = -1;
