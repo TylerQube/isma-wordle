@@ -1,3 +1,5 @@
+const cookieFuncs = require('./cookie');
+
 let wordLen : number = 5;
 let maxGuesses : number = 6;
 
@@ -36,7 +38,7 @@ const setBoardSize = () => {
   board.style.height = `calc(min(${sizeScalePx * maxGuesses}px, ${100 * maxGuesses / wordLen}vw))`;
 };
 
-let curGuess : number = 0;
+let curGuess : number = -1;
 let curLetter : number = 0;
 
 const getCell = (ind : number) => {
@@ -46,15 +48,14 @@ const getCell = (ind : number) => {
   return letterCell.children[0];
 }
 
-const getRow = () => {
-  return document.getElementById('board').children[curGuess];
+const getRow = (ind : number = null) => {
+  return document.getElementById('board').children[ind == null ? curGuess : ind];
 };
 
 const addLetter = (letter : string) : void => {
-  console.log("type");
   // stop if not letter
-  if(curLetter >= wordLen) {
-    console.log("word too long");
+  if(curGuess == -1 || curLetter >= wordLen) {
+    // console.log("word too long");
     return;
   } 
   if(letter.length > 1 || (!letter.match(/[a-z]/i) && isNaN(parseInt(letter)))) {
@@ -69,7 +70,7 @@ const addLetter = (letter : string) : void => {
 }
 
 const backspace = () => {
-  if(curLetter == 0) return;
+  if(curGuess == -1 || curLetter == 0) return;
   const cell = getCell(curLetter - 1);
   cell.setAttribute("letter", "");
   curLetter--;
@@ -107,35 +108,42 @@ const animateTile = (tile : Element, letterStatus : string) => {
 
 }
 
-const showGuess = (row : Element, wordleRes : string[]) => {
+const showGuess = (row : Element, wordleRes : string[], origWord : string = null) => {
   const delayMs = 200;
   let ind = 0;
   const anim = setInterval(() => {
     const letter = wordleRes[ind];
     const animCell = row.children[ind].children[0];
+    if(origWord == "prime") {
+      console.log(origWord)
+      console.log(origWord.charAt(ind));
+    }
 
     animCell.classList.add('loading');
-    setTimeout(() => {
-      switch(letter) {
-        case wordleCodes.correct:
-          animCell.classList.add("correct");
-          break;
-        case wordleCodes.wrong_spot:
-          animCell.classList.add("wrong-spot");
-          break;
-        case wordleCodes.incorrect:
-          animCell.classList.add("incorrect");
-          break;
-      }
-      animCell.classList.remove('loading');
-    }, 200);
+    updateCell(animCell, letter, origWord, ind);
     ind++;
     if(ind >= wordleRes.length) {
       clearInterval(anim);
     } 
   }, delayMs);
-  curGuess++;
-  curLetter = 0;
+}
+
+const updateCell = (cell : Element, letter : string, word : string, ind : number) => {
+  setTimeout(() => {
+    if(word != null) cell.setAttribute("letter", word.charAt(ind).toUpperCase())
+    switch(letter) {
+      case wordleCodes.correct:
+        cell.classList.add("correct");
+        break;
+      case wordleCodes.wrong_spot:
+        cell.classList.add("wrong-spot");
+        break;
+      case wordleCodes.incorrect:
+        cell.classList.add("incorrect");
+        break;
+    }
+    cell.classList.remove('loading');
+  }, 200);
 }
 
 const apiUrl = "/api/"
@@ -146,6 +154,8 @@ const resCodes = {
 }
 
 const checkWord = async () => {
+  if(curGuess == -1) return;
+
   // validate
   const curWord = getCurWord();
   if(curWord.length < wordLen) {
@@ -155,12 +165,14 @@ const checkWord = async () => {
   // check if word in serverside list
   const wordleRes = await apiRequest<WordleRes>(curWord);
   console.log(wordleRes.message);
-  console.log(wordleRes.wordle);
+  if(wordleRes.wordle != null) console.log(wordleRes.wordle);
 
   // handle res, show word errors or update inputs
   if(wordleRes.wordle != undefined) {
     const row = getRow();
     showGuess(row, wordleRes.wordle)
+    curGuess = curGuess + 1 < maxGuesses ? curGuess + 1 : -1;
+    curLetter = 0;
     return;
   }
   else if(wordleRes.message == resCodes.too_short) {
@@ -214,8 +226,8 @@ const setupBoard = async () => {
   document.getElementById('board-cont').appendChild(board);
   setBoardSize();
 };
-setupBoard();
 
+// console.log(document.cookie);
 
 const keys = document.querySelectorAll(".key");
 keys.forEach(k => {
@@ -228,7 +240,30 @@ keys.forEach(k => {
     k.addEventListener('click', checkWord);
     return;
   }
-  k.addEventListener('click', () => {
-    addLetter(letter);
+  k.addEventListener('click', (e : KeyboardEvent) => {
+    if(!e.ctrlKey) addLetter(letter);
   });
 });
+
+const setupFromCookies = () => {
+  setupBoard();
+
+  const cookieMap : Record<string, string> = cookieFuncs.getCookiesMap(document.cookie);
+  // if no previous guesses, nothing to set up
+  if(cookieMap.guessList == null) {
+    curGuess = 0;
+    return;
+  }
+
+  // console.log(cookieMap.guessList);
+  const guesses = JSON.parse(cookieMap.guessList);
+  const delayMs = 200;
+  for(let i = 0; i < guesses.length; i++) {
+    setTimeout(() => {
+      console.log("displaying word: " + guesses[i][0]);
+      showGuess(getRow(i), guesses[i][1], guesses[i][0]);
+    }, 200 * (i + 1))
+  }
+  curGuess = guesses.length;
+};
+setupFromCookies();

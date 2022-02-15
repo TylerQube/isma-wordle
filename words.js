@@ -3,8 +3,10 @@ const path = require('path');
 const isma_words = require('./words/isma_words.json');
 
 const getTodayWord = () => {
-  return "yare";
+  return "acpit";
 };
+
+const getMaxGuesses = () => getTodayWord().length + 1;
 
 const checkWord = (word) => {
   return word.toLowerCase() == getTodayWord();
@@ -63,6 +65,7 @@ const wordleCheckArray = (word) => {
 
 module.exports = {
   getTodayWord,
+  getMaxGuesses,
   checkWord,
   wordInList,
   wordleCheckArray
