@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const timezone = require('timezone');
 
 const app = express();
 
@@ -15,7 +16,22 @@ app.use(express.urlencoded({
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/public')));
 
-app.get('/', (req, res) => {
+const setCookies = (req, res, next) => {
+  const dateStr = getDateStr();
+  console.log(dateStr);
+  console.log("Cookie date: " + req.cookies.guessDate);
+  console.log("Today: " + dateStr);
+  if(req.cookies.guessDate != dateStr) {
+    
+    res.cookie('guessDate', dateStr);
+    res.cookie('guessList', JSON.stringify(new Array()));
+    req.cookies.guessList = JSON.stringify(new Array());
+  }
+
+  next();
+}
+
+app.get('/', setCookies, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'pages', 'index.html'));
 });
 
@@ -28,20 +44,8 @@ app.get('/api/word-length', (req, res) => {
   );
 });
 
-const setCookies = (req, res, next) => {
-  console.log(req.cookies);
-  const dateStr = getDateStr();
-  if(req.cookies.guessDate != dateStr) {
-    res.cookie('guessDate', dateStr);
-    res.cookie('guessList', JSON.stringify(new Array()));
-    req.cookies.guessList = JSON.stringify(new Array());
-  }
-
-  next();
-}
-
 // returns array 
-app.post('/api/check-word', setCookies, (req, res) => {
+app.post('/api/check-word', (req, res) => {
   if(req.body.word == null) {
     res.status(400).json({ message : 'No word supplied' });
     return;
@@ -96,5 +100,7 @@ const getDateStr = () => {
   const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
   const yyyy = today.getFullYear();
 
-  return mm + '-' + dd + '-' + yyyy;
+  console.log(today.getHours())
+
+  return dateStr = mm + '-' + dd + '-' + yyyy;
 }

@@ -3,6 +3,8 @@ const cookieFuncs = require('./cookie');
 let wordLen : number = 5;
 let maxGuesses : number = 6;
 
+const sizeScalePx = 70;
+
 const generateBoard = (wordLength : number, guessCount : number) : HTMLDivElement => {
   const board = document.createElement('div');
   board.classList.add('board');
@@ -17,6 +19,8 @@ const generateBoard = (wordLength : number, guessCount : number) : HTMLDivElemen
       const boardCell = document.createElement('div');
       boardCell.classList.add('board-cell');
       boardCell.id = `cell-${r}-${c}`;
+      // boardCell.style.fontSize = `calc(max(100%, 1em))`;
+
 
       const letterCont = document.createElement('div');
       letterCont.classList.add('letter-cont');
@@ -33,7 +37,6 @@ const generateBoard = (wordLength : number, guessCount : number) : HTMLDivElemen
 const setBoardSize = () => {
   const board = document.getElementById('board');
   console.log("setting dimensions...")
-  const sizeScalePx = 70;
   board.style.width = `min(${sizeScalePx * wordLen}px, 100vw)`;
   board.style.height = `calc(min(${sizeScalePx * maxGuesses}px, ${100 * maxGuesses / wordLen}vw))`;
 
@@ -41,6 +44,10 @@ const setBoardSize = () => {
   for(let i = 0; i < maxGuesses; i++) {
     const row = getRow(i) as HTMLDivElement;
     row.style.gridTemplateColumns = `repeat(${wordLen}, 1fr)`;
+    for(let j = 0; j < row.childElementCount; j++) {
+      const cell = row.children[j] as HTMLDivElement;
+      cell.style.fontSize = `calc(0.5 * ${board.style.height} / ${maxGuesses})`
+    }
   }
 
 };
@@ -115,26 +122,89 @@ const animateTile = (tile : Element, letterStatus : string) => {
 
 }
 
-const showGuess = (row : Element, wordleRes : string[], origWord : string = null) => {
+type keyState = 'correct-key' | 'wrong-spot-key' | 'incorrect-key';
+
+type keyStateArr = {
+  [key : string] : keyState
+}
+const updateKeys = (wordleResList : string[][], origWords : string[], delayMs : number) => {
+
+  let keyObj : keyStateArr = {};
+  for(let i = 0; i < origWords.length; i++) {
+    const word : string = origWords[i];
+    const wordleRes : string[] = wordleResList[i];
+    for(let j = 0; j < word.length; j++) {
+      const letter : string = word.charAt(j);
+      const wordleChar : string = wordleRes[j];
+
+      if(wordleChar == 'G') {
+        keyObj[letter] = 'correct-key';
+      }
+      else if(wordleChar == 'Y') {
+        if(keyObj[letter] != null && keyObj[letter] == 'correct-key') continue;
+        keyObj[letter] = 'wrong-spot-key';
+      }
+      else {
+        if(keyObj[letter] != null && (keyObj[letter] == 'correct-key' || keyObj[letter] == 'wrong-spot-key')) continue;
+        keyObj[letter] = 'incorrect-key';
+      }
+    }
+  }
+
+  setTimeout(() => {
+    console.log(keyObj)
+    for(let key in keyObj) {
+      const keyDiv = document.getElementById(key.toUpperCase());
+      keyDiv.classList.remove('wrong-spot-key');
+      keyDiv.classList.remove('incorrect-key');
+      keyDiv.classList.remove('correct-key');
+      keyDiv.classList.add(keyObj[key]);
+    }
+  }, delayMs);
+
+
+  // let keysList : HTMLDivElement[] = [];
+  // for(let i = 0; i < origWord.length; i++) {
+  //   const key = document.getElementById(origWord.charAt(i).toUpperCase());
+  //   keysList.push(key as HTMLDivElement);
+  // }
+
+  // setTimeout(() => {
+  //   for(let i = 0; i < keysList.length; i++) {
+  //     const key = keysList[i];
+  //     if(wordleRes[i] == 'G') {
+  //       key.classList.remove('wrong-spot-key');
+  //       key.classList.add('correct-key');
+  //     }
+  //     else if(wordleRes[i] == 'Y') {
+  //       if(key.classList.contains('correct-key')) continue;
+  //       key.classList.add('wrong-spot-key');
+  //     }
+  //     else {
+  //       key.classList.add('incorrect-key');
+  //     }
+  //   }
+  // }, delayMs);
+}
+
+const showGuess = (row : Element, wordleRes : string[], origWord : string, retypeWord : boolean = false) => {
   const delayMs = 200;
   let ind = 0;
   const anim = setInterval(() => {
     const letter = wordleRes[ind];
     const animCell = row.children[ind].children[0];
-    if(origWord == "prime") {
-      console.log(origWord)
-      console.log(origWord.charAt(ind));
-    }
 
     animCell.classList.add('loading');
     updateCell(animCell, letter, origWord, ind);
     ind++;
-    if(ind >= wordleRes.length) {
+    if(ind >= wordleRes.length || ind >= row.childElementCount) {
       clearInterval(anim);
     } 
   }, delayMs);
 }
 
+const animDelayMs = 200;
+const afterAnimMs = animDelayMs * 2 * wordLen;
 const updateCell = (cell : Element, letter : string, word : string, ind : number) => {
   setTimeout(() => {
     if(word != null) cell.setAttribute("letter", word.charAt(ind).toUpperCase())
@@ -150,7 +220,7 @@ const updateCell = (cell : Element, letter : string, word : string, ind : number
         break;
     }
     cell.classList.remove('loading');
-  }, 200);
+  }, animDelayMs);
 }
 
 const apiUrl = "/api/"
@@ -177,9 +247,21 @@ const checkWord = async () => {
   // handle res, show word errors or update inputs
   if(wordleRes.wordle != undefined) {
     const row = getRow();
-    showGuess(row, wordleRes.wordle)
-    curGuess = curGuess + 1 < maxGuesses ? curGuess + 1 : -1;
-    curLetter = 0;
+    showGuess(row, wordleRes.wordle, curWord);
+    // updateKeys([wordleRes.wordle], [curWord], afterAnimMs);
+    if(wordleRes.wordle.indexOf("B") == -1 && wordleRes.wordle.indexOf("Y") == -1) {
+      curGuess = -1;
+      // win condition
+      setTimeout(() => {
+        updateNewKeys(curWord, wordleRes.wordle, 0);
+        alert("Nice job!");
+      }, afterAnimMs);
+    }
+    else {
+      updateNewKeys(curWord, wordleRes.wordle, afterAnimMs);
+      curGuess = curGuess + 1 < maxGuesses ? curGuess + 1 : -1;
+      curLetter = 0;
+    }
     return;
   }
   else if(wordleRes.message == resCodes.too_short) {
@@ -225,20 +307,18 @@ const getWordleLen = () : Promise<LengthRes> => {
 const setupBoard = async () => {
   console.log("generating board...");
   const wordLength : number = parseInt((await getWordleLen()).wordleLen);
-  console.log(wordLength);
-
   wordLen = wordLength;
-  maxGuesses = wordLen + 1;
-  const board = generateBoard(wordLength, wordLength + 1);
+  maxGuesses = Math.min(maxGuesses, wordLen + 1);
+  const board = generateBoard(wordLength, maxGuesses);
   document.getElementById('board-cont').appendChild(board);
   setBoardSize();
+  setupFromCookies();
 };
-
-// console.log(document.cookie);
 
 const keys = document.querySelectorAll(".key");
 keys.forEach(k => {
   const letter = k.textContent;
+  k.id = letter;
   if(letter == "Back") {
     k.addEventListener('click', backspace);
     return;
@@ -253,8 +333,6 @@ keys.forEach(k => {
 });
 
 const setupFromCookies = () => {
-  setupBoard();
-
   const cookieMap : Record<string, string> = cookieFuncs.getCookiesMap(document.cookie);
   // if no previous guesses, nothing to set up
   if(cookieMap.guessList == null) {
@@ -264,13 +342,36 @@ const setupFromCookies = () => {
 
   // console.log(cookieMap.guessList);
   const guesses = JSON.parse(cookieMap.guessList);
-  const delayMs = 200;
+  const delayMs = 100;
+  const wordleResArr : string[][] = guesses.map((guess : string[]) => guess[1]);
+  const origWordArr : string[] = guesses.map((guess : string[]) => guess[0]);
+  updateKeys(wordleResArr, origWordArr, afterAnimMs + delayMs * (maxGuesses));
   for(let i = 0; i < guesses.length; i++) {
     setTimeout(() => {
       console.log("displaying word: " + guesses[i][0]);
-      showGuess(getRow(i), guesses[i][1], guesses[i][0]);
-    }, 200 * (i + 1))
+      showGuess(getRow(i), guesses[i][1], guesses[i][0], true);
+    }, delayMs * (i + 1));
   }
   curGuess = guesses.length;
 };
-setupFromCookies();
+
+const updateNewKeys = (newWord : string, newWordle : string[], updateDelayMs : number) => {
+  const cookieMap : Record<string, string> = cookieFuncs.getCookiesMap(document.cookie);
+
+  let wordleResArr : string[][];
+  let origWordArr : string[];
+  // if(cookieMap.guessList == null) {
+  //   wordleResArr = [newWordle];
+  //   origWordArr = [newWord];
+  // }
+  // else {
+  const guesses = JSON.parse(cookieMap.guessList);
+  wordleResArr = guesses.map((guess : string[]) => guess[1]);
+  origWordArr = guesses.map((guess : string[]) => guess[0]);
+
+  console.log(wordleResArr);
+  // }
+  updateKeys(wordleResArr, origWordArr, updateDelayMs);
+};
+
+setupBoard();

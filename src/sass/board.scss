@@ -37,6 +37,8 @@ $grid-gap: 0.6em;
   position: relative;
   height: 100%;
   width: 100%;
+  // font-size: clamp(1em, 90%, 3em);
+  // font-size: calc(min(2em, 90%));
 
   transition: height 0.2s;
 
@@ -51,6 +53,5 @@ $grid-gap: 0.6em;
   &::before {
     content: attr(letter);
     position: absolute;
-    font-size: 2em;  
   }
 }

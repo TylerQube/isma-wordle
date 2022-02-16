@@ -1,6 +1,7 @@
 $correct : rgb(97, 190, 85);
 $wrong-spot : rgb(207, 219, 137);
 $incorrect : gray;
+$incorrect-key : rgb(82, 82, 82);
 
 .loading {
   height: 0%;
@@ -21,6 +22,21 @@ $incorrect : gray;
 .incorrect {
   border: none;
   background-color: $incorrect;
+  color: white;
+}
+
+.correct-key {
+  background-color: $correct;
+  color: white;
+}
+
+.wrong-spot-key {
+  background-color: $wrong-spot;
+  color: white;
+}
+
+.incorrect-key {
+  background-color: $incorrect-key;
   color: white;
 }
 
