@@ -24,6 +24,15 @@ const setCookies = (req, res, next) => {
   if(req.cookies.guessDate != dateStr) {
     
     res.cookie('guessDate', dateStr);
+    req.cookies.guessDate = dateStr;
+    res.cookie('guessList', JSON.stringify(new Array()));
+    req.cookies.guessList = JSON.stringify(new Array());
+  }
+
+  if(
+    req.cookies.guessList[0][0] != null 
+    && req.cookies.guessList[0][0].length != wordFuncs.getTodayWord().length
+  ) {
     res.cookie('guessList', JSON.stringify(new Array()));
     req.cookies.guessList = JSON.stringify(new Array());
   }

@@ -59,13 +59,11 @@ export const setBoardSize = () => {
 
   // if max width allows height ratio to fit
   if(availableWidth / ratioWidthToHeight <= availableHeight) {
-    console.log("filling width");
     board.style.width = Math.min(availableWidth * .9, maxWidth) + "px";
     board.style.height = (parseInt(board.style.width) / ratioWidthToHeight) + "px";
   }
   // otherwise if max height allows width ratio to fit
   else {
-    console.log("filling height");
     console.log("cont height: " + availableHeight);
     board.style.height = Math.min(availableHeight * .9, maxHeight) + "px";
     board.style.width = (parseInt(board.style.height) * ratioWidthToHeight) + "px";
