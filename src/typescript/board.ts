@@ -41,9 +41,41 @@ export const generateBoard = (wordLength : number, guessCount : number) : HTMLDi
 
 export const setBoardSize = () => {
   const board = document.getElementById('board');
-  console.log("setting dimensions...")
-  board.style.width = `min(${sizeScalePx * wordLen}px, 100vw)`;
-  board.style.height = `calc(min(${sizeScalePx * getMaxGuesses()}px, ${100 * getMaxGuesses() / wordLen}vw))`;
+  // board.style.width = `min(${sizeScalePx * wordLen}px, 100vw)`;
+  // board.style.height = `calc(min(${sizeScalePx * getMaxGuesses()}px, ${100 * getMaxGuesses() / wordLen}vw))`;
+
+  const cont = document.getElementById('board-cont');
+  if(board == null) return;
+
+  const availableWidth = Number(cont.clientWidth);
+  const availableHeight = Number(cont.clientHeight);
+
+  const maxWidth = sizeScalePx * wordLen; //px
+  const maxHeight = sizeScalePx * getMaxGuesses(); //px
+
+  const ratioWidthToHeight = wordLen / getMaxGuesses();
+
+  console.log(`Available space: ${availableWidth} x ${availableHeight}`)
+
+  // if max width allows height ratio to fit
+  if(availableWidth / ratioWidthToHeight <= availableHeight) {
+    console.log("filling width");
+    board.style.width = Math.min(availableWidth * .9, maxWidth) + "px";
+    board.style.height = (parseInt(board.style.width) / ratioWidthToHeight) + "px";
+  }
+  // otherwise if max height allows width ratio to fit
+  else {
+    console.log("filling height");
+    console.log("cont height: " + availableHeight);
+    board.style.height = Math.min(availableHeight * .9, maxHeight) + "px";
+    board.style.width = (parseInt(board.style.height) * ratioWidthToHeight) + "px";
+  }
+  console.log(`New dimensions: ${board.style.width} x ${board.style.height}`)
+
+  // const ratio = Math.min(idealWidth / Number(cont.style.width), idealHeight / Number(cont.style.height));
+
+  // board.style.width = (Number(cont.style.width) * ratio) + "px";
+  // board.style.height = (Number(cont.style.height) * ratio) + "px";
 
   board.style.gridTemplateRows = `repeat(${getMaxGuesses()}, 1fr)`;
   for(let i = 0; i < getMaxGuesses(); i++) {

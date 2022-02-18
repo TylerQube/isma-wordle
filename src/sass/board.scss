@@ -4,18 +4,15 @@
   @extend .flex-col;
   @extend .flex-center;
   flex-grow: 1;
-
   width: 100%;
 }
 
-$grid-gap: 0.6em;
+$grid-gap: 0.4em;
 
 .board {
   display: grid;
   grid-gap: $grid-gap;
   box-sizing: border-box;
-
-  padding: 20px;
   z-index: -1;
 }
 
@@ -38,6 +35,7 @@ $grid-gap: 0.6em;
   position: relative;
   height: 100%;
   width: 100%;
+  // font-size: calc(min(5vw, 5vh));
   // font-size: clamp(1em, 90%, 3em);
   // font-size: calc(min(2em, 90%));
 

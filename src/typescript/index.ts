@@ -22,8 +22,8 @@ window.onkeyup = (e : KeyboardEvent) => {
 const keys = document.querySelectorAll(".key");
 keys.forEach(k => {
   const letter = k.textContent;
-  if(letter == null) return;
-  if(letter != null) k.id = letter;
+  if(letter == null || !isNaN(Number(letter))) return;
+  if(letter != null) k.id = letter.toUpperCase();
   if(letter == "Back") {
     k.addEventListener('click', backspace);
     return;
@@ -67,6 +67,10 @@ const setupFromCookies = () => {
     if(filteredLastGuess.length == 0) setEnabled(false);
   }
 };
+
+window.onresize = () => {
+  setBoardSize();
+}
 
 const setupBoard = async () => {
   console.log("generating board...");
