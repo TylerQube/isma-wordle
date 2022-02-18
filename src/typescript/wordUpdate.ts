@@ -1,7 +1,8 @@
-import { wordLen, setWordLen, getMaxGuesses, curGuess, setCurGuess, curLetter, setCurLetter } from './globals';
+import { wordLen, setWordLen, getMaxGuesses, curGuess, setCurGuess, setCurLetter, setEnabled } from './globals';
 import { getRow, getCurWord } from './board';
 import { WordleRes, apiRequest } from './api'; 
 import { updateNewKeys } from './keys';
+import { sendPopup } from './popup';
 
 export const showGuess = (row : Element, wordleRes : string[], origWord : string, retypeWord : boolean = false) => {
   const delayMs = 200;
@@ -45,10 +46,19 @@ export const updateCell = (cell : Element, letter : string, word : string, ind :
   }, animDelayMs);
 }
 
-export const resCodes = {
+const resCodes = {
   too_short : "Incorrect word length",
   not_in_list : "Invalid word"
 }
+
+const winMsgs = new Map<number, string>([
+  [1 , "Incredible!"],
+  [2 , "Awesome!"],
+  [3 , "Wow"],
+  [4 , "Dr. Glazer approves"],
+  [5 , "Nice one"],
+  [6 , "Good save"]
+]);
 
 export const checkWord = async () => {
   if(curGuess == -1) return;
@@ -56,7 +66,7 @@ export const checkWord = async () => {
   // validate
   const curWord : string = getCurWord();
   if(curWord.length < wordLen) {
-    alert("Not enough letters");
+    sendPopup("Not Enough Letters");
     return;
   }
   // check if word in serverside list
@@ -68,26 +78,32 @@ export const checkWord = async () => {
   if(wordleRes.wordle != undefined) {
     const row = getRow();
     showGuess(row, wordleRes.wordle, curWord);
-    // updateKeys([wordleRes.wordle], [curWord], afterAnimMs);
+
     if(wordleRes.wordle.indexOf("B") == -1 && wordleRes.wordle.indexOf("Y") == -1) {
-      setCurGuess(-1);
+      setEnabled(false);
       // win condition
       setTimeout(() => {
         updateNewKeys(curWord, wordleRes.wordle, 0);
-        alert("Nice job!");
+        console.log(curGuess - 1)
+        console.log(winMsgs.get(curGuess +1));
+        sendPopup(winMsgs.get(curGuess + 1));
       }, afterAnimMs);
     }
     else {
       updateNewKeys(curWord, wordleRes.wordle, afterAnimMs);
-      setCurGuess(curGuess + 1 < getMaxGuesses() ? curGuess + 1 : -1);
-      setCurLetter(0);
+      if(curGuess + 1 < getMaxGuesses()) {
+        setCurGuess(curGuess + 1);
+        setCurLetter(0);
+      } else {
+        setEnabled(false);
+      }
     }
     return;
   }
   else if(wordleRes.message == resCodes.too_short) {
-    alert("Uhh add some more letters");
+    sendPopup("Too short");
   }
   else if(wordleRes.message == resCodes.not_in_list) {
-    alert("I don't recognize that word...");
+    sendPopup("Not a word!");
   }
 };

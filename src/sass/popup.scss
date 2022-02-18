@@ -1,0 +1,41 @@
+@import './flex.scss';
+@import "./globals.scss";
+
+#popup-cont {
+  @extend .flex-col;
+  @extend .flex-center;
+
+  position: absolute;
+  top: $header-height;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 100vw;
+
+  margin: auto;
+  padding: 2em;
+}
+
+.popup-msg {
+  color: white;
+  background-color: black;
+
+  padding: 0.8em;
+  margin-top: 0.5em;
+  text-align: center;
+
+  animation-name: fade;
+  animation-fill-mode: forwards;
+  animation-duration: 0.5s;
+  animation-delay: 1s;
+}
+
+@keyframes fade {
+  0% {
+    opacity: 100%;
+  }
+
+  100% {
+    opacity: 0%;
+  }
+}

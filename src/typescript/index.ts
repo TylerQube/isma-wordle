@@ -5,7 +5,7 @@ import { updateKeys, updateNewKeys } from './keys';
 import { getRow, getCell, generateBoard, setBoardSize, addLetter, backspace } from './board';
 import { showGuess, checkWord, afterAnimMs } from './wordUpdate';
 
-import { wordLen, setWordLen, getMaxGuesses, curGuess, setCurGuess, curLetter, setCurLetter } from './globals';
+import { wordLen, setWordLen, getMaxGuesses, curGuess, setCurGuess, curLetter, setCurLetter, guessEnabled, setEnabled } from './globals';
 
 window.onkeyup = (e : KeyboardEvent) => {
   if(e.key == "Backspace") {
@@ -43,6 +43,7 @@ const setupFromCookies = () => {
   // if no previous guesses, nothing to set up
   if(cookieMap.guessList == null) {
     setCurGuess(0);
+    setEnabled(true);
     return;
   }
 
@@ -59,11 +60,12 @@ const setupFromCookies = () => {
     }, delayMs * (i + 1));
   }
   setCurGuess(guesses.length);
+  setEnabled(true);
 
   if(wordleResArr != undefined && wordleResArr.length > 0) {
     console.log(wordleResArr);
     const filteredLastGuess = wordleResArr[wordleResArr.length - 1].filter((g) => { return g != "G" });
-    if(filteredLastGuess.length == 0) setCurGuess(-1);
+    if(filteredLastGuess.length == 0) setEnabled(false);
   }
 };
 

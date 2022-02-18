@@ -1,4 +1,4 @@
-import { wordLen, getMaxGuesses, curGuess, curLetter, setCurLetter, sizeScalePx } from './globals';
+import { wordLen, getMaxGuesses, curGuess, guessEnabled, curLetter, setCurLetter, sizeScalePx } from './globals';
 
 
 export const getCell = (ind : number) => {
@@ -70,7 +70,7 @@ export const getCurWord = () => {
 
 export const addLetter = (letter : string) : void => {
   // stop if guessing disabled or too many letters
-  if(curGuess == -1 || curLetter >= wordLen) {
+  if(!guessEnabled || curLetter >= wordLen) {
     return;
   } 
   if(letter.length > 1 || (!letter.match(/[a-z]/i) && isNaN(parseInt(letter)))) {
@@ -85,7 +85,7 @@ export const addLetter = (letter : string) : void => {
 }
 
 export const backspace = () => {
-  if(curGuess == -1 || curLetter == 0) return;
+  if(!guessEnabled || curLetter == 0) return;
   const cell = getCell(curLetter - 1);
   cell.setAttribute("letter", "");
   setCurLetter(curLetter - 1)
