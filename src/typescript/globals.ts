@@ -15,4 +15,3 @@ export const setEnabled = (enabled : boolean) => guessEnabled = enabled;
 
 export let curLetter : number = 0;
 export const setCurLetter = (newNum : number) => curLetter = newNum;
-// export const getCurLetter = () : number => curLetter;

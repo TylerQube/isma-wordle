@@ -40,56 +40,18 @@ $incorrect-key : rgb(82, 82, 82);
   color: white;
 }
 
-@keyframes correct {
-  40% {
-    height: 0%;
-  }
-
-  60% {
-    height: 0%;
-    background-color: $correct;
-    color: white;
-    border: none;
-  }
-  100% {
-    height: 100%;
-    background-color: $correct;
-    color: white;
-  }
+.jump {
+  animation-name: tile-jump;
+  animation-duration: 0.4s;
+  animation-delay: 0.2s;
 }
 
-@keyframes wrong-spot {
-  40% {
-    height: 0%;
+@keyframes tile-jump {
+  50% {
+    transform: translateY(-30%);
   }
 
-  60% {
-    height: 0%;
-    background-color: $wrong-spot;
-    color: white;
-    border: none;
-  }
   100% {
-    height: 100%;
-    background-color: $wrong-spot;
-    color: white;
-  }
-}
-
-@keyframes incorrect {
-  40% {
-    height: 0%;
-  }
-
-  60% {
-    height: 0%;
-    background-color: $incorrect;
-    color: white;
-    border: none;
-  }
-  100% {
-    height: 100%;
-    background-color: $incorrect;
-    color: white;
+    transform: translateY(0);
   }
 }

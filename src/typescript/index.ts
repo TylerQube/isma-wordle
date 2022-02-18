@@ -52,17 +52,17 @@ const setupFromCookies = () => {
   const wordleResArr : string[][] = guesses.map((guess : string[]) => guess[1]);
   const origWordArr : string[] = guesses.map((guess : string[]) => guess[0]);
 
-  updateKeys(wordleResArr, origWordArr, afterAnimMs + delayMs * getMaxGuesses());
+  updateKeys(wordleResArr, origWordArr, delayMs * guesses.length + afterAnimMs());
   for(let i = 0; i < guesses.length; i++) {
     setTimeout(() => {
       console.log("displaying word: " + guesses[i][0]);
       showGuess(getRow(i), guesses[i][1], guesses[i][0], true);
-    }, delayMs * (i + 1));
+    }, delayMs * i);
   }
   setCurGuess(guesses.length);
   setEnabled(true);
 
-  if(wordleResArr != undefined && wordleResArr.length > 0) {
+  if(wordleResArr != undefined && wordleResArr != null && wordleResArr.length > 0) {
     console.log(wordleResArr);
     const filteredLastGuess = wordleResArr[wordleResArr.length - 1].filter((g) => { return g != "G" });
     if(filteredLastGuess.length == 0) setEnabled(false);

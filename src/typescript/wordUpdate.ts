@@ -1,6 +1,6 @@
 import { wordLen, setWordLen, getMaxGuesses, curGuess, setCurGuess, setCurLetter, setEnabled } from './globals';
 import { getRow, getCurWord } from './board';
-import { WordleRes, apiRequest } from './api'; 
+import { WordleRes, apiRequest, getWordleLen } from './api'; 
 import { updateNewKeys } from './keys';
 import { sendPopup } from './popup';
 
@@ -12,7 +12,7 @@ export const showGuess = (row : Element, wordleRes : string[], origWord : string
     const animCell = row.children[ind].children[0];
 
     animCell.classList.add('loading');
-    updateCell(animCell, letter, origWord, ind);
+    updateCell(animCell, letter, origWord, ind, delayMs);
     ind++;
     if(ind >= wordleRes.length || ind >= row.childElementCount) {
       clearInterval(anim);
@@ -27,8 +27,8 @@ export const wordleCodes = {
 }
 
 const animDelayMs = 200;
-export const afterAnimMs = animDelayMs * 2 * wordLen;
-export const updateCell = (cell : Element, letter : string, word : string, ind : number) => {
+export const afterAnimMs = () => animDelayMs * (wordLen + 2);
+export const updateCell = (cell : Element, letter : string, word : string, ind : number, delayMs : number) => {
   setTimeout(() => {
     if(word != null) cell.setAttribute("letter", word.charAt(ind).toUpperCase())
     switch(letter) {
@@ -43,7 +43,7 @@ export const updateCell = (cell : Element, letter : string, word : string, ind :
         break;
     }
     cell.classList.remove('loading');
-  }, animDelayMs);
+  }, delayMs);
 }
 
 const resCodes = {
@@ -80,17 +80,11 @@ export const checkWord = async () => {
     showGuess(row, wordleRes.wordle, curWord);
 
     if(wordleRes.wordle.indexOf("B") == -1 && wordleRes.wordle.indexOf("Y") == -1) {
-      setEnabled(false);
-      // win condition
-      setTimeout(() => {
-        updateNewKeys(curWord, wordleRes.wordle, 0);
-        console.log(curGuess - 1)
-        console.log(winMsgs.get(curGuess +1));
-        sendPopup(winMsgs.get(curGuess + 1));
-      }, afterAnimMs);
+      winCondition(curWord, wordleRes.wordle);
     }
     else {
-      updateNewKeys(curWord, wordleRes.wordle, afterAnimMs);
+      console.log("scheduling key update: " + afterAnimMs());
+      updateNewKeys(curWord, wordleRes.wordle, afterAnimMs());
       if(curGuess + 1 < getMaxGuesses()) {
         setCurGuess(curGuess + 1);
         setCurLetter(0);
@@ -106,4 +100,30 @@ export const checkWord = async () => {
   else if(wordleRes.message == resCodes.not_in_list) {
     sendPopup("Not a word!");
   }
+};
+
+const winCondition = (curWord : string, wordleStr : string[]) => {
+  setEnabled(false);
+  // win condition
+  setTimeout(() => {
+    updateNewKeys(curWord, wordleStr, 0);
+    console.log(curGuess - 1)
+    console.log(winMsgs.get(curGuess +1));
+    sendPopup(winMsgs.get(curGuess + 1));
+    rippleWord(getRow());
+  }, afterAnimMs());
+}
+
+const rippleWord = (row : Element) => {
+  let delayMs = 50;
+  let ind = 0;
+  const anim = setInterval(() => {
+    const animCell = row.children[ind].children[0];
+
+    animCell.classList.add('jump');
+    ind++;
+    if(ind >= row.childElementCount) {
+      clearInterval(anim);
+    } 
+  }, delayMs);
 };

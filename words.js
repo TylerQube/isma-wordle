@@ -3,7 +3,7 @@ const path = require('path');
 const isma_words = require('./words/isma_words.json');
 
 const getTodayWord = () => {
-  return "access";
+  return "paint";
 };
 
 const getMaxGuesses = () => Math.min(getTodayWord().length + 1, 6);
