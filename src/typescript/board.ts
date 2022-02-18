@@ -81,6 +81,10 @@ export const addLetter = (letter : string) : void => {
   const letterCell = getCell(curLetter);
 
   letterCell.setAttribute("letter", letter);
+  letterCell.classList.add("pop");
+  setTimeout(() => {
+    letterCell.classList.remove("pop");
+  }, 75);
   setCurLetter(curLetter + 1);
 }
 

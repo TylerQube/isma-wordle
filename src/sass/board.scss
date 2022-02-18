@@ -56,3 +56,18 @@ $grid-gap: 0.6em;
     position: absolute;
   }
 }
+
+.pop {
+  animation-name : pop;
+  animation-duration: 0.075s;
+}
+
+@keyframes pop {
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}

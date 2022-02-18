@@ -31,7 +31,6 @@ export const updateKeys = (wordleResList : string[][], origWords : string[], del
   }
 
   setTimeout(() => {
-    console.log("updating keys")
     for(let key in keyObj) {
       const keyDiv = document.getElementById(key.toUpperCase());
       keyDiv.classList.remove('wrong-spot-key');

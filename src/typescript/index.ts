@@ -55,7 +55,6 @@ const setupFromCookies = () => {
   updateKeys(wordleResArr, origWordArr, delayMs * guesses.length + afterAnimMs());
   for(let i = 0; i < guesses.length; i++) {
     setTimeout(() => {
-      console.log("displaying word: " + guesses[i][0]);
       showGuess(getRow(i), guesses[i][1], guesses[i][0], true);
     }, delayMs * i);
   }

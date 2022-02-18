@@ -83,7 +83,6 @@ export const checkWord = async () => {
       winCondition(curWord, wordleRes.wordle);
     }
     else {
-      console.log("scheduling key update: " + afterAnimMs());
       updateNewKeys(curWord, wordleRes.wordle, afterAnimMs());
       if(curGuess + 1 < getMaxGuesses()) {
         setCurGuess(curGuess + 1);
@@ -107,8 +106,6 @@ const winCondition = (curWord : string, wordleStr : string[]) => {
   // win condition
   setTimeout(() => {
     updateNewKeys(curWord, wordleStr, 0);
-    console.log(curGuess - 1)
-    console.log(winMsgs.get(curGuess +1));
     sendPopup(winMsgs.get(curGuess + 1));
     rippleWord(getRow());
   }, afterAnimMs());
