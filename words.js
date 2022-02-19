@@ -4,10 +4,10 @@ const isma_words = require('./words/isma_words.json');
 const wordle_order = require('./words/wordle_order.json');
 
 const getTodayWord = () => {
-  return wordle_order[daysSince(process.env.START_DATE) % wordle_order.length - 1];
+  return wordle_order[daysSince(process.env.START_DATE)];
 };
 
-const getMaxGuesses = () => Math.min(getTodayWord().length + 1, 6);
+const getMaxGuesses = () => /*Math.min(getTodayWord().length + 1,*/ 6/*)*/;
 
 const checkWord = (word) => {
   return word.toLowerCase() == getTodayWord();
