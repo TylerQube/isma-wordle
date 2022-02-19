@@ -3,6 +3,8 @@ const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const timezone = require('timezone');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const app = express();
 

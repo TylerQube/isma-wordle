@@ -6,7 +6,7 @@ import { showGuess, checkWord, afterAnimMs } from './wordUpdate';
 import { wordLen, setWordLen, getMaxGuesses, curGuess, setCurGuess, curLetter, setCurLetter, guessEnabled, setEnabled } from './globals';
 import { cookieNames } from '../../cookieConfig';
 import { getCookiesMap } from './cookie';
-import { openModal } from './modal';
+import { openModal, share, showTutorialModal } from './modal';
 import { setupIcons } from './header';
 
 window.onkeyup = (e : KeyboardEvent) => {
@@ -49,6 +49,10 @@ const setupFromCookies = () => {
     return;
   }
 
+  if(cookieMap[cookieNames.gamesPlayed] == 0) {
+    showTutorialModal();
+  }
+
   const guesses = cookieMap[cookieNames.guessList];
   console.log(`guesses: ` + guesses.length)
   const delayMs = 100;
@@ -67,7 +71,12 @@ const setupFromCookies = () => {
   if(wordleResArr != undefined && wordleResArr != null && wordleResArr.length > 0) {
     console.log(wordleResArr);
     const filteredLastGuess = wordleResArr[wordleResArr.length - 1].filter((g) => { return g != "G" });
-    if(filteredLastGuess.length == 0) setEnabled(false);
+    if(filteredLastGuess.length == 0) {
+      setEnabled(false);
+      setTimeout(() => {
+        openModal();
+      }, delayMs + afterAnimMs())
+    } 
   }
 };
 
@@ -75,13 +84,19 @@ window.onresize = () => {
   setBoardSize();
 }
 
+const setupBtns = () => {
+  document.getElementById('share-btn').addEventListener('click', share);
+};
+
 const setupBoard = async () => {
   console.log("generating board...");
   setWordLen(parseInt((await getWordleLen()).wordleLen));
   const board = generateBoard(wordLen, getMaxGuesses());
   document.getElementById('board-cont').appendChild(board);
+
   setBoardSize();
   setupFromCookies();
+  setupBtns();
 };
 
 setupBoard();

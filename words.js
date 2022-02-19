@@ -1,9 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 const isma_words = require('./words/isma_words.json');
+const wordle_order = require('./words/wordle_order.json');
 
 const getTodayWord = () => {
-  return "carrot";
+  return wordle_order[daysSince(process.env.START_DATE) % wordle_order.length - 1];
 };
 
 const getMaxGuesses = () => Math.min(getTodayWord().length + 1, 6);
@@ -69,4 +70,13 @@ module.exports = {
   checkWord,
   wordInList,
   wordleCheckArray
+}
+
+const daysSince = (date) => {
+  const origTime = new Date(date).getTime();
+  const now = new Date().getTime();
+
+  const diff = now - origTime;
+  const daysSince = Math.floor(diff / (1000 * 3600 * 24));
+  return daysSince;
 }

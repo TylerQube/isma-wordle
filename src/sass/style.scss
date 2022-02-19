@@ -10,10 +10,10 @@
 html, body {
   @extend .m0;
   font-family: Arial, Helvetica, sans-serif;
-  font-weight: bold;
+  // font-weight: bold;
   height: 100vh;
   width: 100vw;
-  position: fixed;
+  position: fixed;  
 }
 
 #header {
@@ -32,8 +32,18 @@ html, body {
     margin: 0.5em;
   }
 
-  .flex-row {
-    padding: 0 1em;
+  .flex-row:first-child {
+    padding-left: 1em;
+  }
+
+  .flex-row:last-child {
+    padding-right: 1em;
+  }
+
+  #header-title {
+    @extend .flex-center;
+    font-weight: bold;
+    font-size: 1.5em;
   }
 }
 
@@ -51,4 +61,32 @@ html, body {
 
 .icon {
   cursor: pointer;
+}
+
+.icon-cont {
+  align-items: center;
+  justify-content: space-around;
+  // width: calc(max(5%, 100px));
+
+  // & > * {
+  //   // margin: 0 0.2em;
+  //   // padding: 0;
+  // }
+
+  & > :first-child {
+    margin-right: 1em;
+  }
+
+  // &:last-child {
+  //   margin-left: 0.2em;
+  // }
+
+  & a {
+    @extend .flex-center;
+  }
+}
+
+#credit-subtitle {
+  margin-bottom: 0.2em;
+  margin-top: 0.3em;
 }
