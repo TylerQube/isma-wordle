@@ -1,9 +1,8 @@
 export let wordLen : number = 5;
 export const setWordLen = (newLen : number) => wordLen = newLen;
-// export const getWordLen = () : number => wordLen;
 
 export const guessCeiling = 6;
-export const getMaxGuesses = () : number => Math.min(wordLen + 1, guessCeiling);
+export const getMaxGuesses = () : number => guessCeiling;
 
 export const sizeScalePx = 70;
 

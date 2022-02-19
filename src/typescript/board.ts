@@ -55,8 +55,6 @@ export const setBoardSize = () => {
 
   const ratioWidthToHeight = wordLen / getMaxGuesses();
 
-  console.log(`Available space: ${availableWidth} x ${availableHeight}`)
-
   // if max width allows height ratio to fit
   if(availableWidth / ratioWidthToHeight <= availableHeight) {
     board.style.width = Math.min(availableWidth * .9, maxWidth) + "px";
@@ -64,16 +62,9 @@ export const setBoardSize = () => {
   }
   // otherwise if max height allows width ratio to fit
   else {
-    console.log("cont height: " + availableHeight);
     board.style.height = Math.min(availableHeight * .9, maxHeight) + "px";
     board.style.width = (parseInt(board.style.height) * ratioWidthToHeight) + "px";
   }
-  console.log(`New dimensions: ${board.style.width} x ${board.style.height}`)
-
-  // const ratio = Math.min(idealWidth / Number(cont.style.width), idealHeight / Number(cont.style.height));
-
-  // board.style.width = (Number(cont.style.width) * ratio) + "px";
-  // board.style.height = (Number(cont.style.height) * ratio) + "px";
 
   board.style.gridTemplateRows = `repeat(${getMaxGuesses()}, 1fr)`;
   for(let i = 0; i < getMaxGuesses(); i++) {

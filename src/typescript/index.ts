@@ -1,11 +1,13 @@
-const cookieFuncs = require('./cookie');
-
 import { WordleRes, apiRequest, getWordleLen } from './api'; 
 import { updateKeys, updateNewKeys } from './keys';
 import { getRow, getCell, generateBoard, setBoardSize, addLetter, backspace } from './board';
 import { showGuess, checkWord, afterAnimMs } from './wordUpdate';
 
 import { wordLen, setWordLen, getMaxGuesses, curGuess, setCurGuess, curLetter, setCurLetter, guessEnabled, setEnabled } from './globals';
+import { cookieNames } from '../../cookieConfig';
+import { getCookiesMap } from './cookie';
+import { openModal } from './modal';
+import { setupIcons } from './header';
 
 window.onkeyup = (e : KeyboardEvent) => {
   if(e.key == "Backspace") {
@@ -39,15 +41,16 @@ keys.forEach(k => {
 });
 
 const setupFromCookies = () => {
-  const cookieMap : Record<string, string> = cookieFuncs.getCookiesMap(document.cookie);
+  const cookieMap : Record<string, any> = getCookiesMap(document.cookie);
   // if no previous guesses, nothing to set up
-  if(cookieMap.guessList == null) {
+  if(cookieMap[cookieNames.guessList] == null) {
     setCurGuess(0);
     setEnabled(true);
     return;
   }
 
-  const guesses = JSON.parse(cookieMap.guessList);
+  const guesses = cookieMap[cookieNames.guessList];
+  console.log(`guesses: ` + guesses.length)
   const delayMs = 100;
   const wordleResArr : string[][] = guesses.map((guess : string[]) => guess[1]);
   const origWordArr : string[] = guesses.map((guess : string[]) => guess[0]);
@@ -82,3 +85,4 @@ const setupBoard = async () => {
 };
 
 setupBoard();
+setupIcons();

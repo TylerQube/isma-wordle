@@ -1,4 +1,6 @@
-const cookieFuncs = require('./cookie');
+import { cookieNames } from "../../cookieConfig";
+
+import { getCookiesMap } from './cookie';
 
 type keyState = 'correct-key' | 'wrong-spot-key' | 'incorrect-key';
 
@@ -42,12 +44,12 @@ export const updateKeys = (wordleResList : string[][], origWords : string[], del
 }
 
 export const updateNewKeys = (newWord : string, newWordle : string[], updateDelayMs : number) => {
-  const cookieMap : Record<string, string> = cookieFuncs.getCookiesMap(document.cookie);
+  const cookieMap : Record<string, any> = getCookiesMap(document.cookie);
 
   let wordleResArr : string[][];
   let origWordArr : string[];
 
-  const guesses = JSON.parse(cookieMap.guessList);
+  const guesses = cookieMap[cookieNames.guessList];
   wordleResArr = guesses.map((guess : string[]) => guess[1]);
   origWordArr = guesses.map((guess : string[]) => guess[0]);
 

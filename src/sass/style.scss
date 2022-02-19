@@ -4,6 +4,7 @@
 @import "./keyboard.scss";
 @import "./letter-status.scss";
 @import "./popup.scss";
+@import "./modal.scss";
 @import "./globals.scss";
 
 html, body {
@@ -17,7 +18,7 @@ html, body {
 
 #header {
   @extend .flex-row;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
 
@@ -29,6 +30,10 @@ html, body {
 
   p, h1, h2, h3, h4, h5, h6 {
     margin: 0.5em;
+  }
+
+  .flex-row {
+    padding: 0 1em;
   }
 }
 
@@ -42,4 +47,8 @@ html, body {
 
   height: calc(100% - #{$header-height});
   width: calc(min(100vw));
+}
+
+.icon {
+  cursor: pointer;
 }

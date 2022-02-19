@@ -3,6 +3,7 @@ import { getRow, getCurWord } from './board';
 import { WordleRes, apiRequest, getWordleLen } from './api'; 
 import { updateNewKeys } from './keys';
 import { sendPopup } from './popup';
+import { openModal } from './modal';
 
 export const showGuess = (row : Element, wordleRes : string[], origWord : string, retypeWord : boolean = false) => {
   const delayMs = 200;
@@ -108,6 +109,7 @@ const winCondition = (curWord : string, wordleStr : string[]) => {
     updateNewKeys(curWord, wordleStr, 0);
     sendPopup(winMsgs.get(curGuess + 1));
     rippleWord(getRow());
+    setTimeout(openModal, 1500);
   }, afterAnimMs());
 }
 
