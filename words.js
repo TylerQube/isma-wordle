@@ -17,7 +17,12 @@ const wordsFile = path.join(__dirname, 'words', 'words.txt');
 const wordInList = (word) => {
   // console.log(`Index of ${word}: ${isma_words.indexOf(word)}`)
   // return isma_words.indexOf(word) != -1;
+
   const words = fs.readFileSync(wordsFile).toString().split("\r\n");
+  console.log(`index in all words ${words.indexOf(word)}`);
+  console.log(`index in isma words ${isma_words.indexOf(word)}`);
+
+
   return words.indexOf(word) != -1 || isma_words.indexOf(word) != -1;
 };
 
