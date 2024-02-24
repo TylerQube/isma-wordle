@@ -24,7 +24,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.2",
-    "node-sass": "^7.0.1",
+    "node-sass": "^9.0.0",
     "sass": "^1.49.7",
     "timezone": "^1.0.23",
     "ts-loader": "^9.2.6",
